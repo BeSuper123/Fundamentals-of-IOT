@@ -32,7 +32,7 @@ def getMessageType(name):
     return _MessageRegister[key]
     
 def getBytesForId(_id, typ):
-    if _id < 0xF:return [(_id<<3)|typ]#we shouldnt get bigger than 0xFF (we shift left 3 bit => 0xF-> 0x78+typ => max 0x7F
+    if _id < 0xF:return [(_id<<3)|typ]
     else:
         data =[]
         value = (_id << 3) | typ
