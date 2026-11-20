@@ -29,7 +29,6 @@ def encode_temperature(temperature):
     message = TemperatureMessage()
     message.publisher_id = config.PUBLISHER_ID
     message.temperature = temperature
-    # This runtime accepts the nested message as serialized bytes.
     message.time = clock.serialize()
     return message.serialize()
 
@@ -55,7 +54,6 @@ def receive_temperature(topic, payload):
         print("{}: {:.2f} C at {:02d}:{:02d}:{:02d}".format(
             publisher_id, temperature, hour, minute, second))
     except Exception as error:
-        # The legacy protobuf parser raises several exception types for bad data.
         print("Ignored invalid message:", error)
 
 
@@ -71,7 +69,6 @@ def main():
     connect_wifi()
     if config.ROLE == "publisher":
         import ntptime
-        # Do not publish an invented wall-clock time if NTP fails.
         ntptime.settime()
         print("Clock synchronized (UTC)")
     client_id = b"lab9-" + ubinascii.hexlify(machine.unique_id())

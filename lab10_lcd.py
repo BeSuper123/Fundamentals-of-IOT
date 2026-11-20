@@ -30,7 +30,6 @@ def encode_temperature(temperature):
     message = TemperatureMessage()
     message.publisher_id = config.PUBLISHER_ID
     message.temperature = temperature
-    # This runtime accepts the nested message as serialized bytes.
     message.time = clock.serialize()
     return message.serialize()
 
@@ -60,7 +59,6 @@ def receive_temperature(topic, payload):
         print("{}: {:.2f} C at {:02d}:{:02d}:{:02d}".format(
             publisher_id, temperature, hour, minute, second))
     except Exception as error:
-        # The legacy protobuf parser raises several exception types for bad data.
         print("Ignored invalid message:", error)
 
 
@@ -77,7 +75,6 @@ def temperature_text(temperature):
 
 def scroll_temperature(lcd, temperature):
     text = temperature_text(temperature)
-    # Show successive 16-character sections for five seconds each.
     print("Scrolling (MQTT paused):", text)
     lcd.clear()
     for offset in range(0, len(text), 16):
@@ -98,7 +95,6 @@ def main():
     connect_wifi()
     if config.ROLE == "publisher":
         import ntptime
-        # Do not publish an invented wall-clock time if NTP fails.
         ntptime.settime()
         print("Clock synchronized (UTC)")
     client_id = b"lab10-" + ubinascii.hexlify(machine.unique_id())
@@ -133,7 +129,6 @@ def main():
                 if pending_temperature is not None:
                     temperature = pending_temperature
                     pending_temperature = None
-                    # A clean disconnect discards messages sent during scrolling.
                     mqtt.disconnect()
                     scroll_temperature(lcd, temperature)
                     mqtt.connect(clean_session=True)
